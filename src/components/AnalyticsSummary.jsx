@@ -154,7 +154,7 @@ export default function AnalyticsSummary({ data }) {
             <div className="fs-panel-header">{label}</div>
             <div className="p-3" style={{ height: 170 }}>
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={hist} margin={{ top: 4, right: 4, bottom: 14, left: 0 }} barSize={14}>
+                <BarChart data={hist} margin={{ top: 4, right: 4, bottom: 14, left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f3f5" vertical={false} />
                   <XAxis
                     dataKey="range"
@@ -170,7 +170,7 @@ export default function AnalyticsSummary({ data }) {
                     contentStyle={{ fontSize: 11, border: '1px solid #dee2e6', borderRadius: 2 }}
                     cursor={{ fill: '#f8f9fa' }}
                   />
-                  <Bar dataKey="count" fill={color} opacity={0.75} radius={[1, 1, 0, 0]} />
+                  <Bar dataKey="count" fill={color} opacity={0.75} radius={[1, 1, 0, 0]} barSize={14} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

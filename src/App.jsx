@@ -1,5 +1,39 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, Component } from 'react';
 import { RefreshCw, Upload, BarChart2, Table, TrendingUp, Info } from 'lucide-react';
+
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ padding: 32, fontFamily: 'monospace', fontSize: 13 }}>
+          <div style={{ color: '#b02a30', fontWeight: 700, fontSize: 15, marginBottom: 12 }}>
+            ⚠ Rendering Error — {this.props.label || 'Component'}
+          </div>
+          <div style={{ background: '#fff5f5', border: '1px solid #f1c0c0', borderRadius: 3, padding: 16, marginBottom: 12 }}>
+            <div style={{ fontWeight: 600, color: '#b02a30', marginBottom: 8 }}>{this.state.error.message}</div>
+            <pre style={{ fontSize: 11, color: '#495057', whiteSpace: 'pre-wrap', overflow: 'auto', maxHeight: 200 }}>
+              {this.state.error.stack}
+            </pre>
+          </div>
+          <button
+            style={{ padding: '6px 14px', background: '#1c6ea4', color: '#fff', border: 'none', borderRadius: 2, cursor: 'pointer', fontSize: 12 }}
+            onClick={() => this.setState({ error: null })}
+          >
+            Dismiss
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 import FileUpload from './components/FileUpload';
 import QuadrantChart from './components/QuadrantChart';
 import DataGrid from './components/DataGrid';
@@ -41,7 +75,11 @@ export default function App() {
   };
 
   if (!scoredData) {
-    return <FileUpload onDataReady={handleDataReady} />;
+    return (
+      <ErrorBoundary label="File Upload">
+        <FileUpload onDataReady={handleDataReady} />
+      </ErrorBoundary>
+    );
   }
 
   return (
@@ -142,10 +180,18 @@ export default function App() {
 
         {/* Content Area */}
         <div style={{ flex: 1, overflowY: 'auto', padding: 12 }}>
-          {tab === 'overview' && <OverviewPanel data={filteredData} />}
-          {tab === 'quadrant' && <QuadrantChart data={filteredData} filters={filters} />}
-          {tab === 'table' && <DataGrid data={filteredData} />}
-          {tab === 'analytics' && <AnalyticsSummary data={filteredData} />}
+          <ErrorBoundary label="Overview" key={`overview-${tab}`}>
+            {tab === 'overview' && <OverviewPanel data={filteredData} />}
+          </ErrorBoundary>
+          <ErrorBoundary label="Quadrant Chart" key={`quadrant-${tab}`}>
+            {tab === 'quadrant' && <QuadrantChart data={filteredData} filters={filters} />}
+          </ErrorBoundary>
+          <ErrorBoundary label="Data Grid" key={`table-${tab}`}>
+            {tab === 'table' && <DataGrid data={filteredData} />}
+          </ErrorBoundary>
+          <ErrorBoundary label="Analytics" key={`analytics-${tab}`}>
+            {tab === 'analytics' && <AnalyticsSummary data={filteredData} />}
+          </ErrorBoundary>
         </div>
       </div>
 
