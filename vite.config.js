@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
+  // Use repo name as base for GitHub Pages; override with VITE_BASE env var for other hosts
+  base: process.env.VITE_BASE ?? '/QualityHeatmap/',
   plugins: [react(), tailwindcss()],
   server: {
     host: true,
