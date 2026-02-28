@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master
+      - claude/analytics-dashboard-e5WSX
   workflow_dispatch:
 
 permissions:
