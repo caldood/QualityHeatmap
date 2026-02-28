@@ -1,25 +1,21 @@
-name: Deploy to GitHub Pages
+name: Build and Deploy to gh-pages
 
 on:
   push:
     branches:
       - main
       - master
-      - claude/analytics-dashboard-e5WSX
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
-# Only one deployment at a time; cancel in-progress if a new push arrives
 concurrency:
-  group: pages
+  group: gh-pages
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,21 +33,10 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          # Base path matches the GitHub Pages URL: https://<user>.github.io/<repo>/
           VITE_BASE: /QualityHeatmap/
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
